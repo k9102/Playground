@@ -1,3 +1,5 @@
+// Factory3.cpp => Factory5.cpp 로 복사
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -7,111 +9,102 @@ using namespace std;
 class Shape
 {
 public:
-    virtual void Draw() { cout << "Draw Shape" << endl;}
+	virtual void Draw() { cout << "Draw Shape" << endl; }
+
+	virtual Shape* Clone() = 0;
 };
-
-class ShapeFactory
-{
-    MAKE_SINGLETON(ShapeFactory)
-    typedef Shape* (*CREATOR)();
-    map<int, CREATOR> create_map;
-public:
-    void Register( int type, CREATOR f )
-    {
-        create_map[type] = f;
-    }
-
-    Shape* CreateShape(int type )
-    {
-        Shape* p = 0;
-        auto ret = create_map.find( type );
-        if ( ret == create_map.end() )
-            return 0;
-        p = create_map[type]();
-
-        return p;
-    }
-};
-
-struct RegisterShape
-{
-    RegisterShape( int type, Shape*(*f)() )
-    {
-        ShapeFactory& factory = ShapeFactory::getInstance();
-
-        factory.Register(type, f);
-    }
-};
-
-
 
 class Rect : public Shape
 {
 public:
-    virtual void Draw() { cout << "Draw Rect" << endl;}
+	virtual void Draw() { cout << "Draw Rect" << endl; }
 
-    static Shape* Create() { return new Rect;}
-    static RegisterShape rs;
+	static Shape* Create() { return new Rect; }
+
+	virtual Shape* Clone() { return new Rect(*this); }
 };
-RegisterShape Rect::rs( 1, &Rect::Create);
-
-
-#define DECLARE_SHAPE( classname )                  \
-    static Shape* Create() { return new classname;}      \
-    static RegisterShape rs;
-
-#define IMPLEMENT_SHAPE( type, classname )                \
-    RegisterShape classname::rs(type, &classname::Create);
-
 
 class Circle : public Shape
 {
 public:
-    virtual void Draw() { cout << "Circle Rect" << endl;}
+	virtual void Draw() { cout << "Circle Rect" << endl; }
 
-    DECLARE_SHAPE( Circle )
+	static Shape* Create() { return new Circle; }
+
+	virtual Shape* Clone() { return new Circle(*this); }
 };
-IMPLEMENT_SHAPE( 2, Circle )
 
 
-class Triangle : public Shape
+
+class ShapeFactory
 {
+	MAKE_SINGLETON(ShapeFactory)
+
+
+		map<int, Shape*> protype_map;
+
 public:
-    virtual void Draw() { cout << "Triangle Rect" << endl;}
+	void Register(int type, Shape* sample)
+	{
+		protype_map[type] = sample;
+	}
 
-    DECLARE_SHAPE( Triangle )
+	Shape* CreateShape(int type)
+	{
+		Shape* p = 0;
+		auto ret = protype_map.find(type);
+		if (ret == protype_map.end())
+			return 0;
+
+		p = protype_map[type]->Clone();
+
+		return p;
+	}
 };
-IMPLEMENT_SHAPE( 3, Triangle )
-
 
 
 
 int main()
 {
-    ShapeFactory& factory = ShapeFactory::getInstance();
+	ShapeFactory& factory = ShapeFactory::getInstance();
+
+	// 공장에 제품을 등록한다.
+	//        클래스 등록
+	//factory.Register( 1, &Rect::Create);
+	//factory.Register( 2, &Circle::Create);
+
+	Rect* r1 = new Rect;// 빨간색 크기 5
+	Rect* r2 = new Rect;// 파란색 크기 10
+
+						// 공장에 객체 등록
+	factory.Register(1, r1);
+	factory.Register(2, r2);
+
+	//factory.ShowProduct();
 
 
-    vector<Shape*> v;
 
-    while( 1 )
-    {
-        int cmd;
-        cin >> cmd;
+	vector<Shape*> v;
 
-   
-        if ( cmd >=1 && cmd <= 5 )
-        {
-            Shape* p = factory.CreateShape(cmd);
+	while (1)
+	{
+		int cmd;
+		cin >> cmd;
 
-            if ( p != 0 )
-                v.push_back( p );
-        }
-        else if ( cmd == 9 )
-        {
-            for ( auto p : v )
-                p->Draw();
-        }
-    }
+		//
+		if (cmd >= 1 && cmd <= 5)
+		{
+			Shape* p = factory.CreateShape(cmd);
+
+			if (p != 0)
+				v.push_back(p);
+		}
+		else if (cmd == 9)
+		{
+			for (auto p : v)
+				p->Draw(); // 다형성
+		}
+	}
 }
 
 
