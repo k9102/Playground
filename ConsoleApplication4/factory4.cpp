@@ -42,7 +42,6 @@ struct RegisterShape
         factory.Register(type, f);
     }
 };
-//RegisterShape rs(1, &Rect::Create);
 
 
 
@@ -57,7 +56,6 @@ public:
 RegisterShape Rect::rs( 1, &Rect::Create);
 
 
-// 모든 도형이 지켜야 하는 규칙을 매크로로 제공
 #define DECLARE_SHAPE( classname )                  \
     static Shape* Create() { return new classname;}      \
     static RegisterShape rs;
@@ -111,7 +109,7 @@ int main()
         else if ( cmd == 9 )
         {
             for ( auto p : v )
-                p->Draw(); // 다형성
+                p->Draw();
         }
     }
 }
