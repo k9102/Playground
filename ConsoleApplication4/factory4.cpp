@@ -100,7 +100,7 @@ int main()
         int cmd;
         cin >> cmd;
 
-        //
+   
         if ( cmd >=1 && cmd <= 5 )
         {
             Shape* p = factory.CreateShape(cmd);
