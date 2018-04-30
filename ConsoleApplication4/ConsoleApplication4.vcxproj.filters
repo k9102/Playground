@@ -38,5 +38,11 @@
     <ClCompile Include="Project2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Project3-1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Project3-2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
