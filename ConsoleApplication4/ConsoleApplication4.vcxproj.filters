@@ -41,5 +41,11 @@
     <ClCompile Include="Project5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="jsontest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
